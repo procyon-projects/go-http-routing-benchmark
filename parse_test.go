@@ -5,6 +5,7 @@
 package main
 
 import (
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"testing"
 )
@@ -81,6 +82,7 @@ var (
 	parseMartini         http.Handler
 	parsePat             http.Handler
 	parsePossum          http.Handler
+	parseProcyon         fasthttp.RequestHandler
 	parseR2router        http.Handler
 	parseRevel           http.Handler
 	parseRivet           http.Handler
@@ -168,6 +170,9 @@ func init() {
 	})
 	calcMem("Possum", func() {
 		parsePossum = loadPossum(parseAPI)
+	})
+	calcMem("Procyon", func() {
+		parseProcyon = loadProcyon(parseAPI)
 	})
 	calcMem("R2router", func() {
 		parseR2router = loadR2router(parseAPI)
@@ -680,6 +685,9 @@ func BenchmarkPat_ParseAll(b *testing.B) {
 }
 func BenchmarkPossum_ParseAll(b *testing.B) {
 	benchRoutes(b, parsePossum, parseAPI)
+}
+func BenchmarkProcyon_ParseAll(b *testing.B) {
+	benchFastHttpRoutes(b, parseProcyon, parseAPI)
 }
 func BenchmarkR2router_ParseAll(b *testing.B) {
 	benchRoutes(b, parseR2router, parseAPI)

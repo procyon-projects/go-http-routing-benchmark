@@ -5,6 +5,7 @@
 package main
 
 import (
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"testing"
 )
@@ -197,6 +198,7 @@ var (
 	staticMartini         http.Handler
 	staticPat             http.Handler
 	staticPossum          http.Handler
+	staticProcyon         fasthttp.RequestHandler
 	staticR2router        http.Handler
 	// staticRevel           http.Handler
 	staticRivet      http.Handler
@@ -292,6 +294,9 @@ func init() {
 	})
 	calcMem("Possum", func() {
 		staticPossum = loadPossum(staticRoutes)
+	})
+	calcMem("Procyon", func() {
+		staticProcyon = loadProcyon(staticRoutes)
 	})
 	calcMem("R2router", func() {
 		staticR2router = loadR2router(staticRoutes)
@@ -400,6 +405,9 @@ func BenchmarkPat_StaticAll(b *testing.B) {
 }
 func BenchmarkPossum_StaticAll(b *testing.B) {
 	benchRoutes(b, staticPossum, staticRoutes)
+}
+func BenchmarkProcyon_StaticAll(b *testing.B) {
+	benchFastHttpRoutes(b, staticProcyon, staticRoutes)
 }
 func BenchmarkR2router_StaticAll(b *testing.B) {
 	benchRoutes(b, staticR2router, staticRoutes)

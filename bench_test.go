@@ -5,6 +5,7 @@
 package main
 
 import (
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"os"
 	"regexp"
@@ -81,6 +82,15 @@ func benchRequest(b *testing.B, router http.Handler, r *http.Request) {
 	}
 }
 
+func benchProcyonRequest(b *testing.B, router fasthttp.RequestHandler, requestContext *fasthttp.RequestCtx) {
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		router(requestContext)
+	}
+}
+
 func benchRoutes(b *testing.B, router http.Handler, routes []route) {
 	w := new(mockResponseWriter)
 	r, _ := http.NewRequest("GET", "/", nil)
@@ -97,6 +107,23 @@ func benchRoutes(b *testing.B, router http.Handler, routes []route) {
 			u.Path = route.path
 			u.RawQuery = rq
 			router.ServeHTTP(w, r)
+		}
+	}
+}
+
+func benchFastHttpRoutes(b *testing.B, router fasthttp.RequestHandler, routes []route) {
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	req := fasthttp.AcquireRequest()
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request = *req
+
+	for i := 0; i < b.N; i++ {
+		for _, route := range routes {
+			req.SetRequestURI(route.path)
+			req.Header.SetMethod(route.method)
+			router(ctx)
 		}
 	}
 }
@@ -257,6 +284,16 @@ func BenchmarkPossum_Param(b *testing.B) {
 
 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
 	benchRequest(b, router, r)
+}
+func BenchmarkProcyon_Param(b *testing.B) {
+	router := loadProcyonSingle("GET", "/user/:name", procyonHandler)
+
+	req := fasthttp.AcquireRequest()
+	req.SetRequestURI("/user/gordon")
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request = *req
+
+	benchProcyonRequest(b, router.Handle, ctx)
 }
 func BenchmarkR2router_Param(b *testing.B) {
 	router := loadR2routerSingle("GET", "/user/:name", r2routerHandler)
@@ -468,6 +505,16 @@ func BenchmarkPossum_Param5(b *testing.B) {
 	r, _ := http.NewRequest("GET", fiveRoute, nil)
 	benchRequest(b, router, r)
 }
+func BenchmarkProcyon_Param5(b *testing.B) {
+	router := loadProcyonSingle("GET", fiveColon, procyonHandler)
+
+	req := fasthttp.AcquireRequest()
+	req.SetRequestURI(fiveRoute)
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request = *req
+
+	benchProcyonRequest(b, router.Handle, ctx)
+}
 func BenchmarkR2router_Param5(b *testing.B) {
 	router := loadR2routerSingle("GET", fiveColon, r2routerHandler)
 
@@ -677,6 +724,16 @@ func BenchmarkPossum_Param20(b *testing.B) {
 
 	r, _ := http.NewRequest("GET", twentyRoute, nil)
 	benchRequest(b, router, r)
+}
+func BenchmarkProcyon_Param20(b *testing.B) {
+	router := loadProcyonSingle("GET", twentyColon, procyonHandler)
+
+	req := fasthttp.AcquireRequest()
+	req.SetRequestURI(twentyRoute)
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request = *req
+
+	benchProcyonRequest(b, router.Handle, ctx)
 }
 func BenchmarkR2router_Param20(b *testing.B) {
 	router := loadR2routerSingle("GET", twentyColon, r2routerHandler)

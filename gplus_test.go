@@ -5,6 +5,7 @@
 package main
 
 import (
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"testing"
 )
@@ -61,6 +62,7 @@ var (
 	gplusMartini         http.Handler
 	gplusPat             http.Handler
 	gplusPossum          http.Handler
+	gplusProcyon         fasthttp.RequestHandler
 	gplusR2router        http.Handler
 	gplusRevel           http.Handler
 	gplusRivet           http.Handler
@@ -148,6 +150,9 @@ func init() {
 	})
 	calcMem("Possum", func() {
 		gplusPossum = loadPossum(gplusAPI)
+	})
+	calcMem("Procyon", func() {
+		gplusProcyon = loadProcyon(gplusAPI)
 	})
 	calcMem("R2router", func() {
 		gplusR2router = loadR2router(gplusAPI)
@@ -660,6 +665,9 @@ func BenchmarkPat_GPlusAll(b *testing.B) {
 }
 func BenchmarkPossum_GPlusAll(b *testing.B) {
 	benchRoutes(b, gplusPossum, gplusAPI)
+}
+func BenchmarkProcyon_GPlusAll(b *testing.B) {
+	benchFastHttpRoutes(b, gplusProcyon, gplusAPI)
 }
 func BenchmarkR2router_GPlusAll(b *testing.B) {
 	benchRoutes(b, gplusR2router, gplusAPI)

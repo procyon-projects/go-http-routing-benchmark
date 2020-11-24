@@ -26,7 +26,6 @@ require (
 	github.com/gravitational/trace v0.0.0-20190726142706-a535a178675f // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/labstack/echo/v4 v4.1.11
 	github.com/lunny/log v0.0.0-20160921050905-7887c61bf0de
 	github.com/lunny/tango v0.5.6
@@ -42,21 +41,20 @@ require (
 	github.com/plimble/ace v0.0.0-20180623113504-ba79f505f416
 	github.com/plimble/sessions v0.0.0-20180326075456-7047d39da9ad // indirect
 	github.com/plimble/utils v0.0.0-20150615054616-fe08d46675cd // indirect
+	github.com/procyon-projects/procyon-web v0.0.0-20201124200647-d245a68038a6
 	github.com/rcrowley/go-metrics v0.0.0-20190826022208-cac0b30c2563 // indirect
 	github.com/rcrowley/go-tigertonic v0.0.0-20170420123839-fe6b9f080eb7
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b // indirect
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
-	github.com/sirupsen/logrus v1.4.2 // indirect
 	github.com/tinylib/msgp v1.1.0 // indirect
 	github.com/typepress/rivet v1.1.1-0.20151208095308-d62b4fcaf6b9
 	github.com/unknwon/com v1.0.1 // indirect
 	github.com/ursiform/bear v1.0.1
+	github.com/valyala/fasthttp v1.17.0
 	github.com/vanng822/r2router v0.0.0-20150523112421-1023140a4f30
 	github.com/vulcand/predicate v1.1.0 // indirect
 	github.com/zenazn/goji v0.9.0
 	goji.io v2.0.2+incompatible
-	golang.org/x/crypto v0.0.0-20190927123631-a832865fa7ad // indirect
-	golang.org/x/net v0.0.0-20190926025831-c00fd9afed17 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/ini.v1 v1.48.0 // indirect
 	gopkg.in/macaron.v1 v1.3.4

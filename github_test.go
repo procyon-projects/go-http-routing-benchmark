@@ -5,6 +5,7 @@
 package main
 
 import (
+	"github.com/valyala/fasthttp"
 	"net/http"
 	"testing"
 )
@@ -299,6 +300,7 @@ var (
 	githubMartini         http.Handler
 	githubPat             http.Handler
 	githubPossum          http.Handler
+	githubProcyon         fasthttp.RequestHandler
 	githubR2router        http.Handler
 	githubRevel           http.Handler
 	githubRivet           http.Handler
@@ -386,6 +388,9 @@ func init() {
 	})
 	calcMem("Possum", func() {
 		githubPossum = loadPossum(githubAPI)
+	})
+	calcMem("Procyon", func() {
+		githubProcyon = loadProcyon(githubAPI)
 	})
 	calcMem("R2router", func() {
 		githubR2router = loadR2router(githubAPI)
@@ -515,6 +520,13 @@ func BenchmarkPat_GithubStatic(b *testing.B) {
 func BenchmarkPossum_GithubStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/user/repos", nil)
 	benchRequest(b, githubPossum, req)
+}
+func BenchmarkProcyon_GithubStatic(b *testing.B) {
+	req := fasthttp.AcquireRequest()
+	req.SetRequestURI("/user/repos")
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request = *req
+	benchProcyonRequest(b, githubProcyon, ctx)
 }
 func BenchmarkR2router_GithubStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/user/repos", nil)
@@ -652,6 +664,13 @@ func BenchmarkPossum_GithubParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/repos/julienschmidt/httprouter/stargazers", nil)
 	benchRequest(b, githubPossum, req)
 }
+func BenchmarkProcyon_GithubParam(b *testing.B) {
+	req := fasthttp.AcquireRequest()
+	req.SetRequestURI("/repos/julienschmidt/httprouter/stargazers")
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request = *req
+	benchProcyonRequest(b, githubProcyon, ctx)
+}
 func BenchmarkR2router_GithubParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/repos/julienschmidt/httprouter/stargazers", nil)
 	benchRequest(b, githubR2router, req)
@@ -762,6 +781,9 @@ func BenchmarkPat_GithubAll(b *testing.B) {
 }
 func BenchmarkPossum_GithubAll(b *testing.B) {
 	benchRoutes(b, githubPossum, githubAPI)
+}
+func BenchmarkProcyon_GithubAll(b *testing.B) {
+	benchFastHttpRoutes(b, githubProcyon, githubAPI)
 }
 func BenchmarkR2router_GithubAll(b *testing.B) {
 	benchRoutes(b, githubR2router, githubAPI)

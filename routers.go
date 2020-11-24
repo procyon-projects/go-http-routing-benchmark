@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/valyala/fasthttp"
 	"io"
 	"log"
 	"net/http"
@@ -47,6 +48,7 @@ import (
 	_ "github.com/naoina/kocha-urlrouter/doublearray"
 	"github.com/pilu/traffic"
 	"github.com/plimble/ace"
+	procyon "github.com/procyon-projects/procyon-web"
 	"github.com/rcrowley/go-tigertonic"
 
 	// "github.com/revel/pathtree"
@@ -1269,6 +1271,37 @@ func loadPossum(routes []route) http.Handler {
 func loadPossumSingle(method, path string, handler possum.HandlerFunc) http.Handler {
 	router := possum.NewServerMux()
 	router.HandleFunc(possumrouter.Simple(path), handler, possumview.Simple("text/html", "utf-8"))
+	return router
+}
+
+// Procyon
+func procyonHandler(c *procyon.WebRequestContext) {
+}
+
+func procyonHandlerWrite(c *procyon.WebRequestContext) {
+}
+
+func procyonHandlerTest(c *procyon.WebRequestContext) {
+}
+
+func loadProcyon(routes []route) fasthttp.RequestHandler {
+	h := procyonHandler
+	if loadTestHandler {
+		h = procyonHandlerTest
+	}
+
+	handlerRegistry := procyon.NewSimpleHandlerRegistry()
+	for _, route := range routes {
+		handlerRegistry.Register(procyon.NewHandler(h, procyon.WithMethod(procyon.RequestMethod(route.method)), procyon.WithPath(route.path)))
+	}
+	router := procyon.NewProcyonWebServerForBenchmark(handlerRegistry)
+	return router.Handle
+}
+
+func loadProcyonSingle(method procyon.RequestMethod, path string, handlerFunc procyon.RequestHandlerFunction) *procyon.ProcyonWebServer {
+	handlerRegistry := procyon.NewSimpleHandlerRegistry()
+	handlerRegistry.Register(procyon.NewHandler(handlerFunc, procyon.WithMethod(method), procyon.WithPath(path)))
+	router := procyon.NewProcyonWebServerForBenchmark(handlerRegistry)
 	return router
 }
 
